@@ -3,6 +3,7 @@ import requests
 from bs4 import BeautifulSoup
 import BaseCrawler
 import logging
+import csv
 
 
 
@@ -126,8 +127,26 @@ class UGhent(BaseCrawler):
     def save_course_data(University, Abbreviation, Department_Name, Course_Title, Unit_Count,
                     Professor, Objective, prerequisites, Required_Skills, Outcome, References, Scores,
                     Description, Projects, University_Homepage, Course_Homepage, Professor_Homepage):
-        
-        return True
+
+        class UGhent(BaseCrawler):
+            with open(Abbreviation + '.csv') as file:
+                writer = csv.writer(file)
+                writer.writerow(University)
+                writer.writerow('Department Name: ' + Department_Name)
+                writer.writerow('Course Title: ' + Course_Title)
+                writer.writerow('Unit Count: ' + Unit_Count)
+                writer.writerow('Profesor: ' + Professor)
+                writer.writerow('Objectives: ' + Objective)
+                writer.writerow('Prerequisites: ' + prerequisites)
+                writer.writerow('Required Skills: ' + Required_Skills)
+                writer.writerow('Outcome: ' + Outcome)
+                writer.writerow('References: ' + References)
+                writer.writerow('Scores: ' + Scores)
+                writer.writerow('Description: ' + Description)
+                writer.writerow('Projects: ' + Projects)
+                writer.writerow('University Homepage: ' + University_Homepage)
+                writer.writerow('Course Homepage: ' + Course_Homepage)
+                writer.writerow('Profesor Homepage: ' + Professor_Homepage)
 
 
     def handler(self):
