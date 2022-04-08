@@ -31,52 +31,9 @@ class UGhent(BaseCrawler):
     Projects = None
     course_count = None
 
-    # response = requests.get('https://www.rug.nl/ocasys/rug/main/browseByFaculty')
-
-    # soup = BeautifulSoup(response.content, 'html.parser')
-
-    # subjects_element = soup.find(class_="main") 
-
-    # subjects = subjects_element.find_all('li')
-
-    # for subject in subjects:
-    #     link = 'https://www.rug.nl/ocasys/rug' + subject.find('a', id="nodeNotSelected").get('href')[2:]
-    #     res = requests.get(link)
-    #     soup = BeautifulSoup(res.content, 'html.parser')
-    #     courses_element = soup.find(class_="userTable")
-    #     courses_name = courses_element.find_all('td')
-
-    #     for course in courses_name:
-    #         courseLink = course.find('a')
-            
-    #         if courseLink != None:
-    #             course_Link = 'https://www.rug.nl' + course.find('a').get('href')
-    #             course_res = requests.get(course_Link)
-    #             soup = BeautifulSoup(course_res.content, 'html.parser')
-    #             detail = soup.find(class_="detailTable")
-    #             details_name = detail.find_all('tr')
-
-    #             for detail_name in details_name:
-    #                 data = detail_name.find('td', class_='fieldLabel')                  # find title of datas 
-                    
-    #                 if data != None:
-    #                     if data.text == 'Leerdoelen':                                   # find Learning outcomes
-    #                         outcomes.append(data.findNext('td').text.strip())           # Add datas to outcomes array 
-
-    #                     if data.text == 'Entreevoorwaarden':                            # find Prerequisites
-    #                         prerequisites.append(data.findNext('td').text.strip())      # Add datas to Prerequisites array 
-                            
-    #                     if data.text == 'Uitgebreide vaknaam':                          # find course name
-    #                         courseName.append(data.findNext('td').text.strip())         # Add datas to courseName array 
-                            
-    #                     if data.text == 'Omschrijving':                                 # find overview
-    #                         description.append(data.findNext('td').text.strip())        # Add datas to description array 
-
-    #                     print(data.findNext('td').text.strip())
-
-
     response = requests.get(Course_Page_Url)
     soup = BeautifulSoup(response.content, 'html.parser')
+
 
     #   find departments
     def get_departments(self, soup):
@@ -124,6 +81,7 @@ class UGhent(BaseCrawler):
                     print(self.objective)
 
 
+    #   save information
     def save_course_data(University, Abbreviation, Department_Name, Course_Title, Unit_Count,
                     Professor, Objective, prerequisites, Required_Skills, Outcome, References, Scores,
                     Description, Projects, University_Homepage, Course_Homepage, Professor_Homepage):
@@ -149,6 +107,7 @@ class UGhent(BaseCrawler):
                 writer.writerow('Profesor Homepage: ' + Professor_Homepage)
 
 
+    #   handler
     def handler(self):
         html_content = requests.get(self.Course_Page_Url).text
         soup = BeautifulSoup(html_content, 'html.parser')
