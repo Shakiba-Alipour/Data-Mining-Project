@@ -4,17 +4,31 @@ from bs4 import BeautifulSoup
 import BaseCrawler
 import logging
 
+
+
 logger = logging.getLogger(__file__)
 
 
 
 class UGhent(BaseCrawler):
+
+    Course_Page_Url = 'https://www.ugent.be/doctoralschools/en/doctoraltraining/courses'
+    University = 'Ghent University'
+    Abbreviation = 'UGhent'
+    University_Homepage = 'https://www.ugent.be/en'
+    
     outcomes = []
     prerequisites = []
     courseName = []
     description = []
     departments_links = []
     courses = []
+
+    Scores = None
+    References = None
+    Professor_Homepage = None
+    Projects = None
+    course_count = None
 
     # response = requests.get('https://www.rug.nl/ocasys/rug/main/browseByFaculty')
 
@@ -60,7 +74,7 @@ class UGhent(BaseCrawler):
     #                     print(data.findNext('td').text.strip())
 
 
-    response = requests.get('https://www.ugent.be/doctoralschools/en/doctoraltraining/courses')
+    response = requests.get(Course_Page_Url)
     soup = BeautifulSoup(response.content, 'html.parser')
 
     #   find departments
@@ -80,9 +94,15 @@ class UGhent(BaseCrawler):
         soup = BeautifulSoup(response.content, 'html.parser')
         table = soup.find_all('tr')
 
+        courses = []
+        Department_Name = soup.find('h1', class_ = 'documentFirstHeading')
+        Course_Homepage = soup.find('base').get('href')
+
         for row in table:
             if row.find('a') is not None:
-                self.courses.append(row.find('a').get('href'))
+                courses.append(row.find('a').get('href'))
+
+        return courses, Department_Name, Course_Homepage
 
 
     #   find informations of course
@@ -103,6 +123,13 @@ class UGhent(BaseCrawler):
                     print(self.objective)
 
 
+    def save_course_data(University, Abbreviation, Department_Name, Course_Title, Unit_Count,
+                    Professor, Objective, prerequisites, Required_Skills, Outcome, References, Scores,
+                    Description, Projects, University_Homepage, Course_Homepage, Professor_Homepage):
+        
+        return True
+
+
     def handler(self):
         html_content = requests.get(self.Course_Page_Url).text
         soup = BeautifulSoup(html_content, 'html.parser')
@@ -116,7 +143,7 @@ class UGhent(BaseCrawler):
 
                 self.save_course_data(
                     self.University, self.Abbreviation, Department_Name, Course_Title, Unit_Count,
-                    Professor, Objective, self.Prerequisite, Required_Skills, Outcome, self.References, self.Scores,
+                    Professor, Objective, self.prerequisites, Required_Skills, Outcome, self.References, self.Scores,
                     Description, self.Projects, self.University_Homepage, Course_Homepage, self.Professor_Homepage
                 )
 
