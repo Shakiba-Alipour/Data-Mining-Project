@@ -72,13 +72,14 @@ class UGhent(BaseCrawler):
 
             
     #   find course links
-        
-    response = requests.get(departments_links[0])
-    soup = BeautifulSoup(response.content, 'html.parser')
-    table = soup.find_all('tr')
-    for row in table:
-        if row.find('a') is not None:
-            courses.append(row.find('a').get('href'))
+    def get_courses_of_department(self, department):
+        response = requests.get(department)
+        soup = BeautifulSoup(response.content, 'html.parser')
+        table = soup.find_all('tr')
+
+        for row in table:
+            if row.find('a') is not None:
+                self.courses.append(row.find('a').get('href'))
 
     #   find informations of course
 
