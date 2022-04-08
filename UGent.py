@@ -1,6 +1,8 @@
 from inspect import Parameter
+from numpy import inner
 import requests
 from bs4 import BeautifulSoup
+import urllib3
 import BaseCrawler
 import logging
 import csv
@@ -30,15 +32,16 @@ class UGhent(BaseCrawler):
     Professor_Homepage = None
     Projects = None
     course_count = None
-
-    response = requests.get(Course_Page_Url)
-    soup = BeautifulSoup(response.content, 'html.parser')
+    #http://localhost:3128/
+    #urllib3.ProxyManager('http://localhost:6315/').request('GET', Course_Page_Url))
+    response = urllib3.ProxyManager('http://localhost:6315/').request('GET', Course_Page_Url)
+    soup = BeautifulSoup(response, 'html.parser')
 
 
     #   find departments
     def get_departments(self, soup):
         department_element = soup.find_all('ul', id = 'parent-fieldname-text')
-        departments = department_element.find_all('a')
+        departments = department_element.find_all('a', class_ = 'internal-link')
 
         for department in departments:
             link = department.get('href')
@@ -69,16 +72,33 @@ class UGhent(BaseCrawler):
         #'https://www.ugent.be/doctoralschools/en/doctoraltraining/courses/specialistcourses/ahl/demystifying-chan-buddhism.htm'
         response = requests.get(course)
         soup = BeautifulSoup(response.content, 'html.parser')
-        things = soup.find_all('h2')
         
-        for thing in things:
-            if thing.text == 'Objectives':
-                self.objective = thing.next_element.next_element.next_element
-                print(self.objective)
-            else:
-                if thing.text == 'Topic and Objectives':
-                    self.objective = thing.next_element.next_element.next_element
-                    print(self.objective)
+        Course_Title = soup.find('h1', class_ = 'documentFirstHeading').get_text()
+        Unit_Count = None
+        Objective = None
+        Outcome = None
+        Professor = None
+        Required_Skills = None
+        Description = None
+
+        contents = soup.find(id = 'content-core').find_all('div')
+        for content in contents:
+            if ((content.name == 'Objectives') or (content.name == 'TopicandObjectives')):
+                Objective = content.find_next('p').text
+
+            elif content.name == 'Trainer':
+                Professor = content.find_next('p').text
+
+            elif content.name == 'Courseprerequisites':
+                self.prerequisites = content.find_next('p').text
+            
+            elif content.name == 'Aim':
+                Outcome = content.find_next('p').text
+
+            elif content.name == 'Topicandtheme':
+                Description = content.find_next('p').text
+
+        return Course_Title, Unit_Count, Objective, Outcome, Professor, Required_Skills, Description
 
 
     #   save information
