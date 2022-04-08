@@ -60,7 +60,7 @@ class UGhent(BaseCrawler):
     response = requests.get('https://www.ugent.be/doctoralschools/en/doctoraltraining/courses')
     soup = BeautifulSoup(response.content, 'html.parser')
 
-    #find departments
+    #   find departments
     def get_departments(self, soup):
         department_element = soup.find_all('ul', id = 'parent-fieldname-text')
         departments = department_element.find_all('a')
@@ -81,17 +81,20 @@ class UGhent(BaseCrawler):
             if row.find('a') is not None:
                 self.courses.append(row.find('a').get('href'))
 
-    #   find informations of course
 
-    response = requests.get('https://www.ugent.be/doctoralschools/en/doctoraltraining/courses/specialistcourses/ahl/demystifying-chan-buddhism.htm')
-    soup = BeautifulSoup(response.content, 'html.parser')
-    things = soup.find_all('h2')
-    for thing in things:
-        if thing.text == 'Objectives':
-            objective = thing.next_element.next_element.next_element
-            print(objective)
-        else:
-            if thing.text == 'Topic and Objectives':
-                objective = thing.next_element.next_element.next_element
-                print(objective)
-    #print(things)
+    #   find informations of course
+    def get_course_data(self, course):
+        #course:
+        #'https://www.ugent.be/doctoralschools/en/doctoraltraining/courses/specialistcourses/ahl/demystifying-chan-buddhism.htm'
+        response = requests.get(course)
+        soup = BeautifulSoup(response.content, 'html.parser')
+        things = soup.find_all('h2')
+        
+        for thing in things:
+            if thing.text == 'Objectives':
+                self.objective = thing.next_element.next_element.next_element
+                print(self.objective)
+            else:
+                if thing.text == 'Topic and Objectives':
+                    self.objective = thing.next_element.next_element.next_element
+                    print(self.objective)
