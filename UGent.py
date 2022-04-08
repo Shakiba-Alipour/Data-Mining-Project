@@ -2,6 +2,9 @@ from inspect import Parameter
 import requests
 from bs4 import BeautifulSoup
 import BaseCrawler
+import logging
+
+logger = logging.getLogger(__file__)
 
 
 
@@ -98,3 +101,25 @@ class UGhent(BaseCrawler):
                 if thing.text == 'Topic and Objectives':
                     self.objective = thing.next_element.next_element.next_element
                     print(self.objective)
+
+
+    def handler(self):
+        html_content = requests.get(self.Course_Page_Url).text
+        soup = BeautifulSoup(html_content, 'html.parser')
+
+        departments = soup.find(id='atozindex').find_all('li')
+        for department in departments:
+            courses, Department_Name, Course_Homepage = self.get_courses_of_department(department)
+            for course in courses:
+                Course_Title, Unit_Count, Objective, Outcome, Professor, Required_Skills, Description = self.get_course_data(
+                    course)
+
+                self.save_course_data(
+                    self.University, self.Abbreviation, Department_Name, Course_Title, Unit_Count,
+                    Professor, Objective, self.Prerequisite, Required_Skills, Outcome, self.References, self.Scores,
+                    Description, self.Projects, self.University_Homepage, Course_Homepage, self.Professor_Homepage
+                )
+
+            logger.info(f"{self.Abbreviation}: {Department_Name} department's data was crawled successfully.")
+
+        logger.info(f"{self.Abbreviation}: Total {self.course_count} courses were crawled successfully.")
