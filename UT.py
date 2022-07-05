@@ -76,7 +76,7 @@ class UT(BaseCrawler):
             '/html/body/form/table/tbody/tr/td/table[6]/tbody/tr[2]/td[1]/table[1]/tbody/tr/td/span/table[2]/tbody/tr[2]/td[2]/span/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr[1]/td/table[2]/tbody/tr/td').text
         self.aims.append(aim)
 
-        return Course_Title, Unit_Count, aim, Outcome, lecturer, Required_Skills, Description, prerequisites
+        return Course_Title, Unit_Count, aim, language, lecturer, Required_Skills, Description, prerequisites
 
     # handler
     def handler(self):
@@ -96,11 +96,11 @@ class UT(BaseCrawler):
                             i) + ']/td[1]/a'
                         self.driver.find_element_by_xpath(path).click()
 
-                        Course_Title, Unit_Count, Objective, Outcome, Professor, Required_Skills, Description, prerequisites = self.get_course_data()
+                        Course_Title, Unit_Count, Objective, language, Professor, Required_Skills, Description, prerequisites = self.get_course_data()
 
                         self.save_course_data(
                             self.University, self.Abbreviation, Department_Name, Course_Title, Unit_Count,
-                            Professor, Objective, self.prerequisites, Required_Skills, Outcome, self.References, self.Scores,
+                            Professor, Objective, self.prerequisites, Required_Skills, language, self.References, self.Scores,
                             Description, self.Projects, self.University_Homepage, self.Professor_Homepage
                         )
 

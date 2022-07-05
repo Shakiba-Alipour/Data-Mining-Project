@@ -14,10 +14,11 @@ class BaseCrawler:
     course_count = 0
 
     def __init__(self):
-        self.output_file = csv.writer(open(f'{self.__class__.__name__}.csv', 'w', encoding='utf-8', newline=''))
+        self.output_file = csv.writer(
+            open(f'{self.__class__.__name__}.csv', 'w', encoding='utf-8', newline=''))
         self.output_file.writerow(
             ['University', 'Abbreviation', 'Department', 'Course title', 'Unit', 'Professor', 'Objective',
-             'Prerequisite', 'Required Skills', 'Outcome', 'References', 'Scores', 'Description', 'Projects',
+             'Prerequisite', 'Required Skills', 'Language', 'References', 'Scores', 'Description', 'Projects',
              'University Homepage', 'Course Homepage', 'Professor Homepage']
         )
 
@@ -31,11 +32,11 @@ class BaseCrawler:
         ...
 
     def save_course_data(self, university, abbreviation, department_name, course_title, unit_count, professor,
-                         objective, prerequisite, required_skills, outcome, references, scores, description, projects,
+                         objective, prerequisite, required_skills, language, references, scores, description, projects,
                          university_homepage, professor_homepage):
         try:
             self.output_file.writerow([university, abbreviation, department_name, course_title, unit_count, professor,
-                                       objective, prerequisite, required_skills, outcome, references, scores,
+                                       objective, prerequisite, required_skills, language, references, scores,
                                        description, projects, university_homepage, professor_homepage])
 
             self.course_count += 1
